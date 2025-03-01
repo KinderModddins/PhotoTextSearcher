@@ -1,0 +1,11 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+PhotoTextSearcher/__init__.py
+PhotoTextSearcher/text_recognizer.py
+PhotoTextSearcher.egg-info/PKG-INFO
+PhotoTextSearcher.egg-info/SOURCES.txt
+PhotoTextSearcher.egg-info/dependency_links.txt
+PhotoTextSearcher.egg-info/requires.txt
+PhotoTextSearcher.egg-info/top_level.txt
