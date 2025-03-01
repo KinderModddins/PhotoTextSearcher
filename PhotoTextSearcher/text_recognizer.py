@@ -1,42 +1,30 @@
+import easyocr
+import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
-import pytesseract
-from langdetect import detect, DetectorFactory
-
-# Фиксируем случайность для стабильности langdetect
-DetectorFactory.seed = 0
 
 class TextRecognizer:
-    def __init__(self, tesseract_cmd=None):
-        if tesseract_cmd:
-            pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
+    def __init__(self, languages=["en", "ru"]):
+        """Инициализация EasyOCR с поддержкой нескольких языков"""
+        self.reader = easyocr.Reader(languages)
 
     def preprocess_image(self, image_path):
-        """ Загружает и подготавливает изображение для распознавания """
-        image = Image.open(image_path)
-        image = image.convert("L")  # Преобразование в ЧБ
-        image = image.filter(ImageFilter.SHARPEN)  # Повышение резкости
-        enhancer = ImageEnhance.Contrast(image)
-        image = enhancer.enhance(2)  # Усиление контраста
+        """Предобработка изображения для повышения точности OCR"""
+        image = Image.open(image_path).convert("L")  # Ч/б
+        image = image.filter(ImageFilter.SHARPEN)  # Улучшение резкости
+        image = ImageEnhance.Contrast(image).enhance(2.0)  # Усиление контраста
         return image
 
-    def detect_language(self, text):
-        """ Определяет язык текста """
-        try:
-            lang_code = detect(text)
-        except:
-            lang_code = "eng"  # Если язык не определён, используем английский
-        return lang_code
-
     def recognize_text(self, image_path):
-        """ Распознаёт текст и автоматически определяет язык """
+        """Распознаёт текст с изображения и фильтрует шум"""
         image = self.preprocess_image(image_path)
-        raw_text = pytesseract.image_to_string(image)  # Распознавание текста
-        lang = self.detect_language(raw_text)  # Определение языка
-        final_text = pytesseract.image_to_string(image, lang=lang)  # Повторное распознавание с правильным языком
-        return final_text
+        results = self.reader.readtext(np.array(image))
 
-# Пример использования
+        # Фильтрация мусора: оставляем только длинные слова
+        text_lines = [res[1] for res in results if len(res[1]) > 2]
+        return "\n".join(text_lines) if text_lines else "Текст не найден"
+
+# 🔹 Пример использования
 if __name__ == "__main__":
     recognizer = TextRecognizer()
     text = recognizer.recognize_text("example.jpg")
-    print("Распознанный текст:", text)
+    print(text)

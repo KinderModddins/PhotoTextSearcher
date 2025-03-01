@@ -20,26 +20,19 @@ pip install PhotoTextSearcher
 Вот пример того, как можно использовать библиотеку для распознавания текста на изображении:
 
 ```python
-from PhotoTextSearcher import TextRecognizer  # Импорт вашей библиотеки
+from PhotoTextSearcher import TextRecognizer
 
-# Создаем экземпляр класса TextRecognizer
 recognizer = TextRecognizer()
+text = recognizer.recognize_text("example.jpg")
+print("📜 Распознанный текст:\n", text)
 
-# Указываем путь к изображению, которое нужно распознать
-image_path = "example.jpg"
-
-# Получаем распознанный текст
-recognized_text = recognizer.recognize_text(image_path)
-
-# Выводим распознанный текст
-print("Распознанный текст:", recognized_text)
 ```
 
 ## Зависимости
 
-- `pytesseract`
+- `easyocr`
 - `Pillow`
-- `langdetect`
+- `numpy`
 
 Эти библиотеки автоматически установятся при установке `PhotoTextSearcher`.
 

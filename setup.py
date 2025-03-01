@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="PhotoTextSearcher",
-    version="0.1.1",
+    version="0.1.2",
     author="MAKCNMOB",
     author_email="support@modkey.fun",
     description="Библиотека для распознавания текста на изображениях",
@@ -11,9 +11,9 @@ setup(
     url="https://github.com/KinderModddins/PhotoTextSearcher",  # Замени на свою ссылку
     packages=find_packages(),
     install_requires=[
-        'pytesseract',
+        'easyocr',
         'Pillow',
-        'langdetect',
+        'numpy',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
