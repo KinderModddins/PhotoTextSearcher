@@ -11,7 +11,7 @@ setup(
     url="https://github.com/KinderModddins/PhotoTextSearcher",  # Замени на свою ссылку
     packages=find_packages(),
     install_requires=[
-        'easyocr',
+        'easyocr==1.7.2',
         'Pillow',
         'numpy',
     ],
