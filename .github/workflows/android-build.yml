@@ -1,0 +1,58 @@
+name: Build APK
+
+# Запускать при каждом пуше в ветку main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu
+
+    steps:
+      # 1. Checkout репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Установка JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'  # Используем OpenJDK от Adoptium
+          java-version: '17'
+
+      # 3. Установка Android SDK и других зависимостей
+      - name: Set up Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+          unzip commandlinetools-linux-8512546_latest.zip -d android-sdk
+          echo "export ANDROID_SDK_ROOT=$PWD/android-sdk" >> $GITHUB_ENV
+          export PATH=$PATH:$PWD/android-sdk/cmdline-tools/latest/bin
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "tools"
+
+      # 4. Установка Gradle
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+
+      # 5. Сделать gradlew исполняемым
+      - name: Grant execute permission for Gradle Wrapper
+        run: chmod +x gradlew
+
+      # 6. Собираем APK
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      # 7. Загрузить APK как артефакт
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/*.apk
