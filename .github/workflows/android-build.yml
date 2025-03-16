@@ -34,7 +34,8 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
           unzip commandlinetools-linux-8512546_latest.zip -d android-sdk
           echo "export ANDROID_SDK_ROOT=$PWD/android-sdk" >> $GITHUB_ENV
-          export PATH=$PATH:$PWD/android-sdk/cmdline-tools/latest/bin
+          echo "export PATH=$PATH:$PWD/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
+          source $GITHUB_ENV
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "build-tools;30.0.3" "platforms;android-30" "tools"
 
